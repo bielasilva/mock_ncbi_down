@@ -15,8 +15,6 @@ args = vars(parser.parse_args())
 download_directory = str(Path(args["directory_download"]).resolve())
 databases = sorted(args["databases"])
 
-# in_file = "/home/gabrielasilva/Documents/projetos/mock_ncbi_down/assembly_summary_fungi.txt"
-# download_directory = "/home/gabrielasilva/Documents/projetos/mock_ncbi_down/"
 first = True
 
 def refseq_download (seq_number, database):
@@ -34,11 +32,18 @@ def refseq_download (seq_number, database):
         refseq_read = csv.reader(i_file, delimiter="\t")
         next(refseq_read)
         refseq_entries = []
+        global refseq_species
+        refseq_species = []
+        # Filter complete genomes
         for row in refseq_read:
             if row[11] == "Complete Genome":
                 refseq_entries.append(row)
+                refseq_specie = row[7].split(" ")
+                refseq_specie = " ".join(refseq_specie[0:2])
+                if refseq_specie not in refseq_species:
+                    refseq_species.append(refseq_specie)
+        # # Randomly chooses the genomes
         random_choices = []
-        # global species
         global species
         species = []
         while len(random_choices) != seq_number:
@@ -48,6 +53,7 @@ def refseq_download (seq_number, database):
             if specie not in species:
                 random_choices.append(choice)
                 species.append(specie)
+        # Downloads the genomes and crates the tsv file
         downloaded = []
         header = ["category", "assembly_accession", "organism_name", "infraspecific_name", "ftp_path", "genome_path", "excluded_from_refseq"]
         refseq_write = csv.DictWriter(o_file, fieldnames=header, delimiter="\t")
@@ -81,19 +87,22 @@ def genbank_download(seq_number, database):
         gb_read = csv.reader(gb_file, delimiter="\t")
         next(gb_read)
         file_header = next(gb_read)
+        # Filter genomes
         gb_entries = []
-        global species
         for row in gb_read:
             if row[11] == "Complete Genome" and row[17] == "na" and row[20] == "":
                 gb_entries.append(row)
+        # Randomly chooses the genomes
         random_choices = []
+        global species
         while len(random_choices) != seq_number:
             choice = random.choices(gb_entries)[0]
             specie = choice[7].split(" ")
             specie = " ".join(specie[0:2]) # Change to 1 in case of different gender
-            if specie not in species:
+            if specie not in species and specie not in refseq_species:
                 random_choices.append(choice)
                 species.append(specie)
+        # Downloads the genomes and appends the tsv file
         header = ["category", "assembly_accession", "organism_name", "infraspecific_name", "ftp_path", "genome_path", "excluded_from_refseq"]
         gb_write = csv.DictWriter(o_file, fieldnames=header, delimiter="\t")
         global first
@@ -131,3 +140,23 @@ for db in databases:
         genbank_download(10, db)
     else:
         print(f"{db} Categoria inválida")
+
+# For testing
+# for db in databases:
+#     if db == "archaea":
+#         refseq_download(1, db)
+#         genbank_download(1, db)
+#     elif db == "bacteria":
+#         refseq_download(1, db)
+#         genbank_download(1, db)
+#     elif db == "fungi":
+#         refseq_download(1, db)
+#         genbank_download(1, db)
+#     elif db == "protozoa":
+#         refseq_download(1, db)
+#         genbank_download(1, db)
+#     elif db == "viral":
+#         refseq_download(1, db)
+#         genbank_download(1, db)
+#     else:
+#         print(f"{db} Categoria inválida")
