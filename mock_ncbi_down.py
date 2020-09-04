@@ -120,12 +120,12 @@ def genbank_download(seq_number, database):
                 "genome_path": genome_link,
                 "excluded_from_refseq": entry[20]
             })
-            os.system(f"wget -P {download_directory}/{database}/refseq/ -c {genome_link} ")
+            os.system(f"wget -P {download_directory}/{database}/genbank/ -c {genome_link} ")
 
 for db in databases:
     if db == "archaea":
         refseq_download(15, db)
-        genbank_download(5, db)
+        genbank_download(2, db)
     elif db == "bacteria":
         refseq_download(15, db)
         genbank_download(5, db)
@@ -134,7 +134,7 @@ for db in databases:
         genbank_download(5, db)
     elif db == "protozoa":
         refseq_download(2, db)
-        genbank_download(2, db)
+        genbank_download(1, db)
     elif db == "viral":
         refseq_download(10, db)
         genbank_download(10, db)

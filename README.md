@@ -19,8 +19,10 @@ It's gonna be downloaded the following number of genomes:
 
 |          | RefSeq | Genbank |
 |----------|--------|---------|
-| Archaea  |   15   |    5    |
+| Archaea  |   15   |   2 *   |
 | Bacteria |   15   |    5    |
 | Fungi    |    5   |    5    |
 | Protozoa |    2   |    2    |
 | viral    |   10   |    10   |
+
+Due to due to there being only 2 genomes in the Genbank Archaea database which fell in those categories, the number of downloads was set to it.
