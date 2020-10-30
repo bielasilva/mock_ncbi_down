@@ -4,6 +4,7 @@ Usage
     `mock_ncbi_down.py [-h] -d DIRECTORY_DOWNLOAD -c {archaea,bacteria,fungi,protozoa,viral}`
 * -d/--directory_download -> Directory where the files will be saved
 * -c/--databases -> Databases to be downloaded
+* -r -> Sets program to **only** download from RefSeq
 
 This script randomly selects genomes from RefSeq and Genbank based on the following criteria:
 1. RefSeq

@@ -7,17 +7,37 @@ from pathlib import Path
 # Entry arguments
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-d","--directory_download", type=str, help="Directory to save downloads", required=True)
-parser.add_argument("-c", "--databases", type=str, nargs='+', choices=["archaea", "bacteria", "fungi", "protozoa", "viral"], help="Databases", required=True)
+parser.add_argument("-d", "--directory_download",
+                    type=str,
+                    help="Directory to save downloads", required=True)
+parser.add_argument("-r", "--refseq_only",
+                    action='store_true',
+                    help="Directory to save downloads")
+parser.add_argument("-c", "--databases",
+                    type=str,
+                    nargs='+',
+                    choices=["archaea", "bacteria", "fungi", "protozoa", "viral"],
+                    help="Databases", required=True)
 
 args = vars(parser.parse_args())
 
 download_directory = str(Path(args["directory_download"]).resolve())
 databases = sorted(args["databases"])
+refseq_only = args["refseq_only"]
 
 first = True
+def silva(): #! NOT IMPLEMENTED
+    silva_file = "/home/gabrielasilva/Downloads/SSU/SILVA_138_SSU_tax_silva.fasta"
+    global silva_species
+    silva_species = []
+    with open(silva_file) as inf:
+        for row in inf:
+            if row.startswith(">"):
+                silva_specie = row.split(";")[-1].split(" ")
+                silva_specie = " ".join(silva_specie[0:2]).replace("\n", "")
+                silva_species.append(silva_specie)
 
-def refseq_download (seq_number, database):
+def refseq_download(seq_number, database):
     # Assembly_summary Download
     try:
         os.makedirs(f"{download_directory}/{database}/refseq")
@@ -125,19 +145,24 @@ def genbank_download(seq_number, database):
 for db in databases:
     if db == "archaea":
         refseq_download(15, db)
-        genbank_download(2, db)
+        if not refseq_only:
+            genbank_download(2, db)
     elif db == "bacteria":
         refseq_download(15, db)
-        genbank_download(5, db)
+        if not refseq_only:
+            genbank_download(5, db)
     elif db == "fungi":
         refseq_download(5, db)
-        genbank_download(5, db)
+        if not refseq_only:
+            genbank_download(5, db)
     elif db == "protozoa":
         refseq_download(2, db)
-        genbank_download(1, db)
+        if not refseq_only:
+            genbank_download(1, db)
     elif db == "viral":
         refseq_download(10, db)
-        genbank_download(10, db)
+        if not refseq_only:
+            genbank_download(10, db)
     else:
         print(f"{db} Categoria inválida")
 
@@ -145,18 +170,23 @@ for db in databases:
 # for db in databases:
 #     if db == "archaea":
 #         refseq_download(1, db)
-#         genbank_download(1, db)
+#         if not refseq_only:
+#             genbank_download(1, db)
 #     elif db == "bacteria":
 #         refseq_download(1, db)
-#         genbank_download(1, db)
+#         if not refseq_only:
+#             genbank_download(1, db)
 #     elif db == "fungi":
 #         refseq_download(1, db)
-#         genbank_download(1, db)
+#         if not refseq_only:
+#             genbank_download(1, db)
 #     elif db == "protozoa":
 #         refseq_download(1, db)
-#         genbank_download(1, db)
+#         if not refseq_only:
+#             genbank_download(1, db)
 #     elif db == "viral":
 #         refseq_download(1, db)
-#         genbank_download(1, db)
+#         if not refseq_only:
+#             genbank_download(1, db)
 #     else:
 #         print(f"{db} Categoria inválida")
